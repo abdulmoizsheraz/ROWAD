@@ -3,7 +3,7 @@ const {GenerateLogo} = require("../controllers/ImageGen");
 
 const router = express.Router();
 
-router.route("/generateLogo").post(GenerateLogo);
+router.route("/generateImage").post(GenerateLogo);
 
 
 module.exports = router;

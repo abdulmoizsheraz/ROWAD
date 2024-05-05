@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectDatabase = () => {
   mongoose
-    .connect("mongodb://0.0.0.0:27017/ROWAD", {
+    .connect("mongodb+srv://sherazmoiz9:FMGxSK0XXAOR42S0@cluster0.l6qfsrz.mongodb.net/", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
