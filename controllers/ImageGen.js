@@ -1,6 +1,6 @@
 exports.GenerateLogo = async (req, res) => {
     const apiUrl = 'https://api.limewire.com/api/image/generation';
-    const apiKey = 'lmwr_sk_xJUEkwmSyn_QgJ2AuqyRSk7BHLlGofdL8nyzgQL4Be1S1pxX';
+    const apiKey = 'lmwr_sk_6FGKIDBZsZ_yNIUcqCDnP8K4J1gmuyUSVbPH3hoWje3XYmgK';
    // dd15a51a-1f04-4d69-a62f-b241291e3b17
   
     try {
