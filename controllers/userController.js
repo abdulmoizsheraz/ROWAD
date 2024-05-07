@@ -3,17 +3,11 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 const crypto = require("crypto");
-const cloudinary = require("cloudinary");
 
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-  //   folder: "avatars",
-  //   width: 150,
-  //   crop: "scale",
-  // });
 
-  const { name, email, password, username, PhoneNo, Address,avatar } = req.body;
+  const { name, email, password, username, PhoneNo, Address } = req.body;
 
   const user = await User.create({
     name,
@@ -22,7 +16,6 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
     username,
     PhoneNo,
     Address,
-    avatar
   });
 
   sendToken(user, 201, res);
@@ -31,44 +24,44 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 // Update User Profile
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  const newUserData = {
-    name: req.body.name,
-    email: req.body.email,
-    username: req.body.username,
-    PhoneNo: req.body.PhoneNo,
-    Address: req.body.Address,
-  };
+  const { name, email, username, PhoneNo, Address } = req.body;
 
-  if (req.body.avatar !== "") {
-    const user = await User.findById(req.user.id);
-
-    const imageId = user.avatar.public_id;
-
-    await cloudinary.v2.uploader.destroy(imageId);
-
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    });
-
-    newUserData.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
+  // Check if any of the required fields are missing
+  if (!name || !email || !username || !PhoneNo || !Address) {
+    return next(new ErrorHander("All fields are required", 400));
   }
 
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+  // Check if the provided email is already in use by another user
+  const existingUser = await User.findOne({ email });
+  if (existingUser && existingUser._id.toString() !== req.user.id) {
+    return next(new ErrorHander("Email is already in use", 400));
+  }
+
+  // Update the user data
+  const updatedUserData = {
+    name,
+    email,
+    username,
+    PhoneNo,
+    Address,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user.id, updatedUserData, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
   });
 
+  // Check if user exists
+  if (!user) {
+    return next(new ErrorHander("User not found", 404));
+  }
+
   res.status(200).json({
     success: true,
+    user,
   });
 });
-
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;

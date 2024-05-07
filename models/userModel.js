@@ -41,20 +41,6 @@ const userSchema = new mongoose.Schema({
     maxLength: [100, "Address cannot exceed 100 characters"],
     minLength: [10, "Address should have more than 10 characters"],
   },
-  avatar: {
-    public_id: {
-      type: String,
-      required: false,
-    },
-    url: {
-      type: String,
-      required: false,
-    },
-  },
-  role: {
-    type: String,
-    default: "user",
-  },
   createdAt: {
     type: Date,
     default: Date.now,
